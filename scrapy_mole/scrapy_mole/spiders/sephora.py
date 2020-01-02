@@ -8,25 +8,31 @@ class Sephora_scrapy(scrapy.Spider):
     name = 'sephora'
     allowed_domains = ["sephora.com"]
     CURRENT_PAGE = 1
+    item = ScrapyMoleItem()
 
     def parse(self, response):
         for url in get_urls(index=1):
-            yield scrapy.Request(url, callback=self.parse_url)
+            yield scrapy.Request(url, callback=self.parse_url(url))
 
-    def parse_url(self, response):
-        item = ScrapyMoleItem()
+    def parse_url(self, response, url):
         try:
-            str1 = response.selector.xpath('/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[1]/div[1]/h1/a/span/text()')
-            str2 = response.selector.xpath('/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[1]/div[1]/h1/span/text()')
+            self.item['product_url'] = url
+            str1 = response.selector.xpath(
+                '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[1]/div[1]/h1/a/span/text()')
+            str2 = response.selector.xpath(
+                '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[1]/div[1]/h1/span/text()')
             item['product_name'] = str1 + str2
-            item['product_img'] = response.selector.xpath('//*[@id="tabItem_6wt_1_0"]/div/div/div/img')
-            
-            variations = response.selector.xpath('/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/span/text()').extract()
+            item['product_img'] = response.selector.xpath(
+                '//*[@id="tabItem_6wt_1_0"]/div/div/div/img')
+
+            variations = response.selector.xpath(
+                '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/span/text()').extract()
             tmp = ''
             for variation in variations:
                 tmp = tmp + variation
             item['product_variation'] = tmp
-            button = response.selector.xpath('/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[2]/div[1]/div[2]/div/div[7]/button').extract()[0].replace('<','').replace('>','').replace('/','')
+            button = response.selector.xpath('/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[2]/div[1]/div[2]/div/div[7]/button').extract()[
+                0].replace('<', '').replace('>', '').replace('/', '')
             '''
             button data-at="selected_swatch" aria-selected="false" aria-live="polite" 
             aria-atomic="true" aria-describedby="colorSwatch" 
