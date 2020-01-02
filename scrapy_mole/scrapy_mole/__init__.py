@@ -13,7 +13,10 @@ def get_urls(index=1):
     index:
         1: sephora
     '''
+    url_list = []
     if 1 == index:
         pattern = 'sephora*'
     urls = redis.keys(pattern)
-    return urls
+    for url in urls:
+        url_list.append(redis.hmget(url, 'product_url'))
+    return url_list
