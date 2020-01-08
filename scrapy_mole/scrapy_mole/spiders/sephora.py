@@ -17,6 +17,8 @@ class Sephora_scrapy(scrapy.Spider):
         item = ScrapyMoleItem()
         try:
             item['product_url'] = url
+            with open('/home/ss.txt', w) as f:
+                f.write(item)
             str1 = response.selector.xpath(
                 '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[1]/div[1]/h1/a/span/text()')
             str2 = response.selector.xpath(

@@ -16,9 +16,11 @@ class ScrapyMolePipeline(object):
                 'product_img': item['product_img'],
                 'product_variation': item['product_variation'],
                 'product_status': item['product_status'],
-                'update_time'： time
+                'update_time': time
                 }
         try:
+            with open('/home/l.txt', 'w') as f:
+                f.write(dict)
             Redis.hmset(item['product_url'], dict)
         except Exception as e:
             logging.exception('pipelines----------'+str(e))
