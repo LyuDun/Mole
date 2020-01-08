@@ -4,23 +4,12 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-import arrow
+from datetime import datetime
 from scrapy_mole import Redis
 from scrapy_mole import logging
 
 
 class ScrapyMolePipeline(object):
     def process_item(self, item, spider):
-        time = str(arrow.now().datetime())
-        dict = {'product_name': item['product_name'],
-                'product_img': item['product_img'],
-                'product_variation': item['product_variation'],
-                'product_status': item['product_status'],
-                'update_time': time
-                }
-        try:
-            with open('/home/l.txt', 'w') as f:
-                f.write(dict)
-            Redis.hmset(item['product_url'], dict)
-        except Exception as e:
-            print('pipelines----------'+str(e))
+        item["update_time"] = datetime.utcnow()
+        return item

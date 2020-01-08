@@ -16,3 +16,4 @@ class ScrapyMoleItem(scrapy.Item):
     product_img = scrapy.Field()
     product_variation = scrapy.Field()
     product_status = scrapy.Field()
+    update_time = scrapy.Field()
