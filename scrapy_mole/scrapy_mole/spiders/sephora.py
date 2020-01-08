@@ -8,15 +8,15 @@ class Sephora_scrapy(scrapy.Spider):
     name = 'sephora'
     allowed_domains = ["sephora.com"]
     CURRENT_PAGE = 1
-    item = ScrapyMoleItem()
 
     def parse(self, response):
         for url in get_urls(index=1):
             yield scrapy.Request(url, callback=self.parse_url(url))
 
     def parse_url(self, response, url):
+        item = ScrapyMoleItem()
         try:
-            self.item['product_url'] = url
+            item['product_url'] = url
             str1 = response.selector.xpath(
                 '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[1]/div[1]/h1/a/span/text()')
             str2 = response.selector.xpath(

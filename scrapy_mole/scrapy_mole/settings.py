@@ -10,9 +10,10 @@
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 BOT_NAME = 'scrapy_mole'
-
+LOG_LEVEL = 'INFO'
 SPIDER_MODULES = ['scrapy_mole.spiders']
 NEWSPIDER_MODULE = 'scrapy_mole.spiders'
+USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.92 Safari/537.36'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -64,9 +65,9 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'scrapy_mole.pipelines.ScrapyMolePipeline': 300,
-#}
+ITEM_PIPELINES = {
+    'scrapy_mole.pipelines.ScrapyMolePipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
