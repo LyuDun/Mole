@@ -23,4 +23,4 @@ class ScrapyMolePipeline(object):
                 f.write(dict)
             Redis.hmset(item['product_url'], dict)
         except Exception as e:
-            logging.exception('pipelines----------'+str(e))
+            print('pipelines----------'+str(e))

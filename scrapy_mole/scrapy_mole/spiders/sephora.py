@@ -11,12 +11,11 @@ class Sephora_scrapy(scrapy.Spider):
 
     def parse(self, response):
         for url in get_urls(index=1):
-            yield scrapy.Request(url, callback=self.parse_url(url))
+            yield scrapy.Request(url, callback=self.parse_url)
 
-    def parse_url(self, response, url):
+    def parse_url(self, response):
         item = ScrapyMoleItem()
         try:
-            item['product_url'] = url
             with open('/home/ss.txt', w) as f:
                 f.write(item)
             str1 = response.selector.xpath(
@@ -24,8 +23,12 @@ class Sephora_scrapy(scrapy.Spider):
             str2 = response.selector.xpath(
                 '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[1]/div[1]/h1/span/text()')
             item['product_name'] = str1 + str2
+            with open('/home/ss.txt', w) as f:
+                f.write(item)
             item['product_img'] = response.selector.xpath(
                 '//*[@id="tabItem_6wt_1_0"]/div/div/div/img')
+            with open('/home/ss.txt', w) as f:
+                f.write(item)
 
             variations = response.selector.xpath(
                 '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/span/text()').extract()
