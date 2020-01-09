@@ -5,7 +5,7 @@ from scrapy_mole.items import ScrapyMoleItem
 
 class Sephora_scrapy(RedisSpider):
     name = 'sephora'
-    redis_key = 'sephora:https://www.sephora.com'
+    redis_key = 'sephora:start_urls'
     # https://www.sephora.com/product/detox-dry-shampoo-P378169?icid2=editors%27%20picks:p378169:product
 
     def __init__(self, *args, **kwargs):
@@ -19,23 +19,21 @@ class Sephora_scrapy(RedisSpider):
             str2 = response.selector.xpath(
                 '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[1]/div[1]/h1/span/text()')
             item['product_name'] = str1 + str2
-            '''
             item['product_img'] = response.selector.xpath(
-                '//*[@id="tabItem_6wt_1_0"]/div/div/div/img')
+                '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[1]/div[1]/div[3]/div[2]/div/div/div/div[1]/div/div/div/img/@src').extract()
             variations = response.selector.xpath(
                 '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/span/text()').extract()
             tmp = ''
             for variation in variations:
                 tmp = tmp + variation
             item['product_variation'] = tmp
-            button = response.selector.xpath('/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[2]/div[1]/div[2]/div/div[7]/button').extract()[
-                0].replace('<', '').replace('>', '').replace('/', '')
+            
+            button = response.selector.xpath('/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[1]/div[3]/div/div[2]/div[1]/div/div[1]/div[2]/button').extract()[0].replace('<', '').replace('>', '').replace('/', '')
             search_obj = re.search('Out of stock', button)
             if search_obj:
-                item['product_status'] = 'Y'
+                item['product_status'] = 'N'
             else:
-                item["product_status"] = 'N'
-            '''
+                item["product_status"] = 'Y'
             yield item
         except Exception as e:
             print('error-----' + str(e))

@@ -9,8 +9,6 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'scrapy_mole'
-LOG_LEVEL = 'INFO'
 SPIDER_MODULES = ['scrapy_mole.spiders']
 NEWSPIDER_MODULE = 'scrapy_mole.spiders'
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.92 Safari/537.36'
@@ -20,7 +18,11 @@ DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 SCHEDULER_PERSIST = True
 FEED_EXPORT_ENCODING = 'utf-8'
 REDIS_HOST = 'localhost'
+REDIS_PARAMS = {
+        'password': '1a2b3cmm2507@@',
+        }
 REDIS_PORT = 6379
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'scrapy_mole (+http://www.yourdomain.com)'
 
