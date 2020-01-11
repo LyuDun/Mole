@@ -19,7 +19,7 @@ SCHEDULER_PERSIST = True
 FEED_EXPORT_ENCODING = 'utf-8'
 REDIS_HOST = 'localhost'
 REDIS_PARAMS = {
-        'password': '1a2b3cmm2507@@',
+        'password': '1a2b3cmm2507',
         }
 REDIS_PORT = 6379
 
