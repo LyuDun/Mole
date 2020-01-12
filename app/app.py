@@ -7,8 +7,10 @@ from flask_bootstrap import Bootstrap
 from flask_login import login_required, login_user, logout_user, current_user
 
 from forms import Mole_Product_Form, LoginForm, RegisterForm
-from ext import db, login_manager
+from ext import  db,login_manager
+from flask_sqlalchemy import SQLAlchemy
 from models import Mole_Product, Mole_User
+
 
 SECRET_KEY = 'This is my key'
 
@@ -16,7 +18,7 @@ app = Flask(__name__)
 bootstrap = Bootstrap(app)
 
 app.secret_key = SECRET_KEY
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:1a2b3cmm2507@localhost/mole"
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:1a2b3c@localhost:3306/mole"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
@@ -32,7 +34,7 @@ login_manager.login_message = u'对不起，您还没有登录'
 def show_url_list():
     form = Mole_Product_Form()
     if request.method == 'GET':
-        mole_product = Mole_Product.query.all()
+        mole_product = Mole_Product.query.filter_by(phone_number=current_user.phone_number)
         return render_template('index.html', mole_product=mole_product, form=form)
     else:
         if form.validate_on_submit():
@@ -49,7 +51,7 @@ def show_url_list():
 @app.route('/delete/<int:id>/')
 @login_required
 def delete_url_list(id):
-    mole_product = Mole_Product.query.filter_by(id=id).first_or_404()
+    mole_product = Mole_Product.query.filter_by(id=id, phone_number=current_user.phone_number).first_or_404()
     db.session.delete(mole_product)
     db.session.commit()
     flash('You have delete a url')
@@ -60,8 +62,7 @@ def delete_url_list(id):
 @login_required
 def change_url_list(id):
     if request.method == 'GET':
-        mole_product = Mole_Product.query.filter_by(
-            id=id).first_or_404()
+        mole_product = Mole_Product.query.filter_by(phone_number=current_user.phone_number).first_or_404()
         form = Mole_Product_Form()
         form.product_url.data = mole_product.product_url
         return render_template('modify.html', form=form)
