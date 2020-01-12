@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block navbar %}
+<nav class="navbar navbar-inverse container">
+    <div class="navbar-header"> <a class="navbar-brand" href="{{ url_for('show_url_list') }}">鼹鼠到货通知网</a> </div>
+    <!-- logout links -->
+    <ul class="nav navbar-nav pull-right">
+        <li><a class="btn" href="{{ url_for('register') }}">注册</a></li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <h2 class="form-signin-heading">请登录</h2>
+        {{ wtf.quick_form(form, form_type="horizontal") }}
+    </div>
+</div>
+{% endblock %}
