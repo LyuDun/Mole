@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 import time
-from datetime import datetime
+import time
 from ext import db
 from flask_login import UserMixin
 
@@ -23,8 +23,8 @@ class Mole_Product(db.Model):
         self.product_url = product_url
         #self.product_name = product_name
         #self.product_variation = product_variation
-        self.product_status = 00
-        self.create_time = datetime.utcnow()
+        self.product_status = '00'
+        self.create_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.update_time = self.create_time
 
 

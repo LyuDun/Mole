@@ -58,7 +58,10 @@ class Sephora_scrapy(RedisSpider):
                 api_json = api_response.json()
                 for i in api_json['regularChildSkus']:
                     if i['skuId'] == skuId:
-                        item['product_status'] = i['actionFlags']['isAddToBasket']
+                        if i['actionFlags']['isAddToBasket'] == 'True':
+                            item['product_status'] = '01'
+                        else:
+                            item['product_status'] = '00'
             yield item
         except Exception as e:
             print('error-----' + str(e))

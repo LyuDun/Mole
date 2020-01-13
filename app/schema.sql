@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `mole_product` (
   `product_name` varchar(512),
   `product_img` varchar(512),
   `product_variation` varchar(128),
-  `product_status` int(2) DEFAULT 00,
+  `product_status` char(2) DEFAULT '00',
   `create_time` DATETIME NOT NULL,
   `update_time` DATETIME,
   PRIMARY KEY (`id`)
