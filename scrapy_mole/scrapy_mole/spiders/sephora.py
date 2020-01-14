@@ -58,6 +58,8 @@ class Sephora_scrapy(RedisSpider):
                 api_json = api_response.json()
                 for i in api_json['regularChildSkus']:
                     if i['skuId'] == skuId:
+                        print('-----------------------')
+                        print(type(i['actionFlags']['isAddToBasket']))
                         if i['actionFlags']['isAddToBasket'] == 'True':
                             item['product_status'] = '01'
                         else:

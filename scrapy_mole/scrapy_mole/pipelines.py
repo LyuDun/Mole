@@ -5,7 +5,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 import time
-from scrapy_mole import Redis, db, logging
+from .ext import Redis, db, logging
 
 cursor = db.cursor()
 class ScrapyMolePipeline(object):
@@ -14,9 +14,7 @@ class ScrapyMolePipeline(object):
         sql = """UPDATE mole_product SET product_name = %s, product_img = %s, product_variation = %s, product_status = %s, update_time = %s WHERE product_url = %s""" % (
             item['product_name'], item['product_img'], item['product_variation'], item['product_status'], item['update_time'], item['product_url'])
         try:
-            # 执行SQL语句
             cursor.execute(sql)
-            # 提交到数据库执行
             db.commit()
         except Exception:
             db.rollback()

@@ -22,7 +22,7 @@ REDIS_PARAMS = {
         'password': '1a2b3cmm2507',
         }
 REDIS_PORT = 6379
-
+REDIRECT_ENABLED = False
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'scrapy_mole (+http://www.yourdomain.com)'
 
