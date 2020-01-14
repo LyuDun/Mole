@@ -18,12 +18,12 @@ class Sephora_scrapy(RedisSpider):
         try:
             item['product_url'] = response.url
             str1 = response.selector.xpath(
-                '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[1]/div[1]/h1/a/span/text()')
+                '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[1]/div[1]/h1/a/span/text()').extract()[0]
             str2 = response.selector.xpath(
-                '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[1]/div[1]/h1/span/text()')
+                '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[1]/div[1]/h1/span/text()').extract()[0]
             item['product_name'] = str1 + str2
             item['product_img'] = response.selector.xpath(
-                '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[1]/div[1]/div[3]/div[2]/div/div/div/div[1]/div/div/div/img/@src').extract()
+                '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[1]/div[1]/div[3]/div[2]/div/div/div/div[1]/div/div/div/img/@src').extract()[0]
             variations = response.selector.xpath(
                 '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/span/text()').extract()
             tmp = ''
@@ -60,7 +60,8 @@ class Sephora_scrapy(RedisSpider):
                     if i['skuId'] == skuId:
                         print('-----------------------')
                         print(type(i['actionFlags']['isAddToBasket']))
-                        if i['actionFlags']['isAddToBasket'] == 'True':
+                        print(i['actionFlags']['isAddToBasket'])
+                        if i['actionFlags']['isAddToBasket'] == True:
                             item['product_status'] = '01'
                         else:
                             item['product_status'] = '00'
