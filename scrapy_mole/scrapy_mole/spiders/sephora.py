@@ -17,54 +17,83 @@ class Sephora_scrapy(RedisSpider):
         item = ScrapyMoleItem()
         try:
             item['product_url'] = response.url
-            str1 = response.selector.xpath(
-                '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[1]/div[1]/h1/a/span/text()').extract()[0]
-            str2 = response.selector.xpath(
-                '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/div[1]/div[1]/h1/span/text()').extract()[0]
-            item['product_name'] = str1 + str2
-            item['product_img'] = response.selector.xpath(
-                '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[1]/div[1]/div[3]/div[2]/div/div/div/div[1]/div/div/div/img/@src').extract()[0]
-            variations = response.selector.xpath(
-                '/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[2]/span/text()').extract()
+            print(item['product_url'])
+            
+            item['product_name'] = response.selector.xpath('/html/head/title/text()').extract_first()
+        except Exception as e:
+            print('name' + str(e)) 
+
+            ''' 
+            try:
+                item['product_img'] = response.selector.xpath('/html/body/div[2]/div[5]/main/div[2]/div[1]/div/div/div[1]/div[1]/div[3]/div[2]/div/div/div/div[1]/div/div/div/img/@src').extract_first()
+            except Exception as e:
+                print('img' + str(e)) 
+            print(item['product_img'])
+            '''
+        try:
+            variations = response.selector.xpath('//span[@data-comp="ProductVariation Text Box "]/text()').extract()
             tmp = ''
             for variation in variations:
                 tmp = tmp + variation
-            item['product_variation'] = tmp
+            item['product_variation'] = tmp 
+        except Exception as e:
+            print('variation' + str(e)) 
 
-            url = response.url
-            # 例如url:https://www.sephora.com/product/matte-velvet-skin-blurring-powder-foundation-P443566?skuId=2210052
-            # 获取商品的编号
-            pattern = re.compile(r"(?<=P)\d+")
-            product_no = pattern.search(url).group(0)
-            # 获取商品具体型号的编号skuid, 如果获取不到：提取网页中的默认skuid
+
+        url = response.url
+        # 例如url:https://www.sephora.com/product/matte-velvet-skin-blurring-powder-foundation-P443566?skuId=2210052
+        # 获取商品的编号
+        pattern = re.compile(r"(?<=P)\d+")
+        product_no = pattern.search(url).group(0)
+        # 获取商品具体型号的编号skuid, 如果获取不到：提取网页中的默认skuid
+        defaut_type = 1
+        try:
             pattern2 = re.compile(r"(?<=skuId=)\d+")
-            skuId = pattern2.search(url).group(0)
-            if  not skuId:
-                skuId = re.search(
-                    r'/d+', response.selector.xpath('/html/head/script[51]').extract())
-            # 拼接查是否有库存的api，请求api地址，解析json获取商品库存状态
-            # https://www.sephora.com/api/users/profiles/current/product/P453916?skipAddToRecentlyViewed=false&preferedSku=2310324
-            api_url = 'https://www.sephora.com/api/users/profiles/current/product/P' + \
-                str(product_no)
+            m = pattern2.search(url)
+            if m is not None:
+                skuId = m.group(0)
+            else:
+                skuId_list = response.xpath('//div[@data-comp="SizeAndItemNumber Box "]/text()').extract()
+                for skuId_str in skuId_list:
+                    m  = re.search(r'\d{6,8}', skuId_str) 
+                    if m is not None:
+                        skuId = m.group(0)
+                        defaut_type = 2
+                        break
+        except Exception as e:
+            print('skuId' + str(e))
+       
+        # 拼接查是否有库存的api，请求api地址，解析json获取商品库存状态
+        # https://www.sephora.com/api/users/profiles/current/product/P453916?skipAddToRecentlyViewed=false&preferedSku=2310324
+        api_url = 'https://www.sephora.com/api/users/profiles/current/product/P' + str(product_no)
 
-            headers = {
-                'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36',
-                'Referer' : url,
-                'Host' : 'www.sephora.com'
-            }
+        print(api_url)
+        headers = {
+            'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36',
+            'Referer' : url,
+            'Host' : 'www.sephora.com'
+        }
+        
+        try:
             api_response = requests.get(api_url, headers=headers)
             if api_response.status_code == 200:
-                print('status_code' + str(api_response.status_code))
                 api_json = api_response.json()
-                for i in api_json['regularChildSkus']:
-                    if i['skuId'] == skuId:
-                        print('-----------------------')
-                        print(type(i['actionFlags']['isAddToBasket']))
-                        print(i['actionFlags']['isAddToBasket'])
-                        if i['actionFlags']['isAddToBasket'] == True:
-                            item['product_status'] = '01'
-                        else:
-                            item['product_status'] = '00'
-            yield item
+                if defaut_type == 1:
+                    for i in api_json['regularChildSkus']:
+                        if i['skuId'] == skuId:
+                            print('-----------------------')
+                            print(type(i['actionFlags']['isAddToBasket']))
+                            print(i['actionFlags']['isAddToBasket'])
+                            if i['actionFlags']['isAddToBasket'] == True:
+                                item['product_status'] = '01'
+                            else:
+                                item['product_status'] = '00'
+                elif defaut_type == 2:
+                    if api_json['currentSku']['actionFlags']['isAddToBasket'] == True:
+                        item['product_status'] = '01'
+                    else:
+                        item['product_status'] = '00'
         except Exception as e:
             print('error-----' + str(e))
+        
+        yield item

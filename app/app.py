@@ -82,17 +82,17 @@ def change_url_list(id):
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if request.method == 'POST':
+    if form.validate_on_submit():
         try:
-            user = Mole_User.query.filter_by(
-                phone_number=request.form.get('phone_number'), password=request.form.get('password')).first()
+            phone_number=request.form.get('phone_number')
+            password=request.form.get('password')
+            user = Mole_User.query.filter_by(phone_number=phone_number, password=password).first()
             if user:
                 login_user(user)
                 flash('you have logged in!')
                 return redirect(url_for('show_url_list'))
             else:
                 flash('Invalid username or password')
-                print('no-----')
         except Exception as e:
             print(e)
     return render_template('login.html', form=form)
@@ -111,12 +111,12 @@ def register():
     form = RegisterForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            user = Mole_User(phone_number=request.form.get('phone_number'), email=request.form.get('email'),username=request.form.get('username'), password=request.form.get('password'))  # 新添加一个用户到数据库中
+            user = Mole_User(phone_number=request.form.get('phone_number'), username=request.form.get('username'), password=request.form.get('password'), email=request.form.get('email'))  # 新添加一个用户到数据库中
         db.session.add(user)
         db.session.commit()
         login_user(user)
         flash(u'注册成功')
-        return redirect(url_for('show_url_list'))    # 这一步一直有问题，无法重定向，直接跳到下面去了
+        return redirect(url_for('show_url_list'))
     else:
         return render_template('register.html', form=form)
 
