@@ -22,6 +22,7 @@ app.secret_key = SECRET_KEY
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:1a2b3c@localhost:3306/mole"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 
 db.init_app(app)
 login_manager.init_app(app)
