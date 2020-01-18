@@ -10,12 +10,13 @@ from forms import Mole_Product_Form, LoginForm, RegisterForm
 from ext import  db,login_manager
 from flask_sqlalchemy import SQLAlchemy
 from models import Mole_Product, Mole_User
-
+from flask_cors import CORS
 
 SECRET_KEY = 'This is my key'
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
+CORS(app)
 
 app.secret_key = SECRET_KEY
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:1a2b3c@localhost:3306/mole"
@@ -48,21 +49,21 @@ def show_url_list():
         return redirect(url_for('show_url_list'))
 
 
-@app.route('/delete/<int:id>/')
+@app.route('/delete/<int:id>')
 @login_required
 def delete_url_list(id):
-    mole_product = Mole_Product.query.filter_by(id=id, phone_number=current_user.phone_number).first_or_404()
+    mole_product = Mole_Product.query.filter_by(id=id, phone_number=current_user.phone_number).first()
     db.session.delete(mole_product)
     db.session.commit()
     flash('You have delete a url')
     return redirect(url_for('show_url_list'))
 
 
-@app.route('/change/<int:id>/', methods=['GET', 'POST'])
+@app.route('/change/<int:id>', methods=['GET', 'POST'])
 @login_required
 def change_url_list(id):
     if request.method == 'GET':
-        mole_product = Mole_Product.query.filter_by(phone_number=current_user.phone_number).first_or_404()
+        mole_product = Mole_Product.query.filter_by(phone_number=current_user.phone_number).first()
         form = Mole_Product_Form()
         form.product_url.data = mole_product.product_url
         return render_template('modify.html', form=form)
@@ -79,7 +80,7 @@ def change_url_list(id):
         return redirect(url_for('show_url_list'))
 
 
-@app.route('/login/', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -98,7 +99,7 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route('/logout/')
+@app.route('/logout')
 @login_required
 def logout():
     logout_user()
@@ -106,17 +107,17 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/register/',  methods=['GET', 'POST'])
+@app.route('/register',  methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
     if request.method == 'POST':
         if form.validate_on_submit():
             user = Mole_User(phone_number=request.form.get('phone_number'), username=request.form.get('username'), password=request.form.get('password'), email=request.form.get('email'))  # 新添加一个用户到数据库中
-        db.session.add(user)
-        db.session.commit()
-        login_user(user)
-        flash(u'注册成功')
-        return redirect(url_for('show_url_list'))
+            db.session.add(user)
+            db.session.commit()
+            login_user(user)
+            flash(u'注册成功')
+            return redirect(url_for('show_url_list'))
     else:
         return render_template('register.html', form=form)
 
@@ -127,4 +128,4 @@ def load_user(user_id):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
