@@ -5,12 +5,13 @@ from __future__ import unicode_literals
 from flask import (Flask, render_template, redirect, url_for, request, flash)
 from flask_bootstrap import Bootstrap
 from flask_login import login_required, login_user, logout_user, current_user
-
+import os
 from forms import Mole_Product_Form, LoginForm, RegisterForm
 from ext import  db,login_manager
 from flask_sqlalchemy import SQLAlchemy
 from models import Mole_Product, Mole_User
 from flask_cors import CORS
+
 
 SECRET_KEY = 'This is my key'
 
@@ -129,4 +130,5 @@ def load_user(user_id):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
+    #app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=80, debug=False)
