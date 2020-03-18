@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+{% block navbar %}
+<nav class="navbar navbar-inverse container">
+     <div class="navbar-header"> <a class="navbar-brand" href="{{ url_for('show_url_list') }}">鼹鼠到货通知网</a> </div>
+     <!-- logout links -->
+     <ul class="nav navbar-nav pull-right">
+          <li><a class="btn" href="{{ url_for('show_url_list') }}">返回</a></li>
+     </ul>
+</nav>
+{% endblock %}
+
+{% block page_content %}
+    <h2>用户:{{mole_user.phone_number }} </h2>
+    <p>绑定邮箱:{{mole_user.email }} </p>
+    <p>
+        {% if mole_user.email_notice == 'Y' %}
+            是否邮件通知:是
+        {% elif mole_user.email_notice == 'N' %}
+            是否邮件通知:否
+	{% endif %}
+    </p>
+
+{% import 'bootstrap/wtf.html' as wtf %}
+<form method="post">
+     {{ wtf.quick_form(form) }}
+</form>
+{% endblock %}

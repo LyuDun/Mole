@@ -4,10 +4,6 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}" type="image/x-icon">
     <link rel="icon" href="{{ url_for('static', filename = 'favicon.ico') }}" type="image/x-icon">
 {% endblock %}
-{% block style %}
-    {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.min.css') }}">
-{% endblock %}
 
 {% block navbar %}
     <nav class="navbar navbar-inverse container">
@@ -15,7 +11,7 @@
       {% if current_user.is_authenticated %}
       <ul class="nav navbar-nav pull-right">
         <li><a class="btn" href="{{ url_for('logout') }}">登出</a></li>
-        <li><a class="btn1" href="{{ url_for('logout') }}">个人主页</a></li>
+        <li><a class="btn1" href="{{ url_for('show_user') }}">个人主页</a></li>
       </ul>
       {% endif %}
     </nav>
@@ -38,8 +34,3 @@
     </div>
 {% endblock %}
 
-{% block scripts %}
-    {{super()}}
-    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-{% endblock %}

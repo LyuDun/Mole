@@ -46,7 +46,6 @@ class Sephora_scrapy(RedisSpider):
         pattern = re.compile(r"(?<=P)\d+")
         product_no = pattern.search(url).group(0)
         # 获取商品具体型号的编号skuid, 如果获取不到：提取网页中的默认skuid
-        defaut_type = 1
         try:
             pattern2 = re.compile(r"(?<=skuId=)\d+")
             m = pattern2.search(url)
@@ -55,14 +54,13 @@ class Sephora_scrapy(RedisSpider):
             else:
                 skuId_list = response.xpath('//div[@data-comp="SizeAndItemNumber Box "]/text()').extract()
                 for skuId_str in skuId_list:
-                    m  = re.search(r'\d{6,8}', skuId_str) 
+                    m  = re.search(r'\d{4,8}', skuId_str) 
                     if m is not None:
                         skuId = m.group(0)
-                        defaut_type = 2
                         break
         except Exception as e:
             print('skuId' + str(e))
-       
+        print('id是:'+ str(skuId)) 
         # 拼接查是否有库存的api，请求api地址，解析json获取商品库存状态
         # https://www.sephora.com/api/users/profiles/current/product/P453916?skipAddToRecentlyViewed=false&preferedSku=2310324
         api_url = 'https://www.sephora.com/api/users/profiles/current/product/P' + str(product_no)
@@ -78,21 +76,18 @@ class Sephora_scrapy(RedisSpider):
             api_response = requests.get(api_url, headers=headers)
             if api_response.status_code == 200:
                 api_json = api_response.json()
-                if defaut_type == 1:
-                    for i in api_json['regularChildSkus']:
-                        if i['skuId'] == skuId:
-                            print('-----------------------')
-                            print(type(i['actionFlags']['isAddToBasket']))
-                            print(i['actionFlags']['isAddToBasket'])
-                            if i['actionFlags']['isAddToBasket'] == True:
-                                item['product_status'] = '01'
-                            else:
-                                item['product_status'] = '00'
-                elif defaut_type == 2:
+                if api_json['currentSku']['skuId'] == skuId:
                     if api_json['currentSku']['actionFlags']['isAddToBasket'] == True:
                         item['product_status'] = '01'
                     else:
                         item['product_status'] = '00'
+                else:
+                    for i in api_json['regularChildSkus']:
+                        if i['skuId'] == skuId:
+                            if i['actionFlags']['isAddToBasket'] == True:
+                                item['product_status'] = '01'
+                            else:
+                                item['product_status'] = '00'
         except Exception as e:
             print('error-----' + str(e))
         

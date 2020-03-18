@@ -1,10 +1,12 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 import time
-import time
+from datetime import datetime
+import pytz
 from ext import db
 from flask_login import UserMixin
 
+tz = pytz.timezone('Asia/Shanghai')
 
 class Mole_Product(db.Model):
     __tablename__ = 'mole_product'
@@ -24,8 +26,9 @@ class Mole_Product(db.Model):
         #self.product_name = product_name
         #self.product_variation = product_variation
         self.product_status = '00'
-        self.create_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        self.update_time = self.create_time
+        mytime = datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d %H:%M:%S')
+        self.create_time = mytime 
+        self.update_time = mytime
 
 
 class Mole_User(UserMixin, db.Model):
@@ -38,10 +41,10 @@ class Mole_User(UserMixin, db.Model):
     wechat_name = db.Column(db.String(60))
     email = db.Column(db.String(40))
     wechat_notice = db.Column(db.String(1), default='N')
-    email_notice = db.Column(db.String(1), default='N')
+    email_notice = db.Column(db.String(1), default='Y')
 
     def __init__(self, phone_number, username, password, email):
         self.phone_number = phone_number
         self.username = username
-        self.email = self.email
         self.password = password
+        self.email = email
