@@ -1,0 +1,36 @@
+{% extends "bootstrap/base.html" %}
+{% block head %}
+    {{ super() }}
+    <link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename = 'favicon.ico') }}" type="image/x-icon">
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-inverse container">
+      <div class="navbar-header"> <a class="navbar-brand" href="{{ url_for('show_url_list') }}">鼹鼠到货通知网</a> </div>
+      {% if current_user.is_authenticated %}
+      <ul class="nav navbar-nav pull-right">
+        <li><a class="btn" href="{{ url_for('logout') }}">登出</a></li>
+        <li><a class="btn1" href="{{ url_for('show_user') }}">个人主页</a></li>
+      </ul>
+      {% endif %}
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+      <!-- flash message -->
+      {% for message in get_flashed_messages() %}
+      <div class="alert alert-warning alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">close</span></button>
+        {{ message }}
+      </div>
+      {% endfor %}
+
+      <!-- body block -->
+      {% block page_content %} {% endblock %}
+    </div>
+{% endblock %}
+

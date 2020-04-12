@@ -1,0 +1,11 @@
+Flask==1.1.2
+Flask-Bootstrap==3.3.7.0
+Flask-Login==0.4.0
+Flask-SQLAlchemy==2.1
+Flask-WTF==0.13.1
+gunicorn==19.9.0
+PyMySQL==0.9.3
+Scrapy==1.8.0              
+scrapy-redis==0.6.8
+requests==2.21.0
+redis==3.3.11

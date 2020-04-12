@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+{% block page_content %}
+
+<table class="table table-hover">
+    <thead>
+        <th class="active">No</th>
+        <th class="active">url</th>
+        <th class="active">名称</th>
+        <th class="active">型号</th>
+        <th class="active">状态</th>
+        <th class="active">创建时间</th>
+        <th class="active">状态更新时间</th>
+        <th class='active'>操作</th>
+        <th class='active'>操作</th>  
+    </thead>
+    <tbody>
+        {% for my_url in mole_product %}
+
+            <!-- tr -->
+            {% if my_url.status %} <tr class="success">
+            {% else %} <tr class="info"> {% endif %}
+                <td>{{ loop.index }}</td>
+                <td><a href="{{ my_url.product_url }}"">{{ my_url.product_url }}</a></td>
+                <td>{{ my_url.product_name }}</td>
+                <td>{{ my_url.product_variation }}</td>
+                <td>
+                    {% if my_url.product_status == '00' %}
+                        监控中
+                    {% elif my_url.product_status == '01' %}
+                        有货
+                    {% elif my_url.product_status == '10' %}
+                        有货(已通知)
+                    {% endif %}
+                </td>
+                <td>{{ my_url.create_time }}</td>
+                <td>{{ my_url.update_time }}</td>
+                <td>
+                    <a href="{{ url_for('delete_url_list', id=my_url.id) }}" class="btn btn-danger" role ="button">删除</a>
+                </td>
+                <td>
+                    <a href="{{ url_for('change_url_list', id=my_url.id) }}" class="btn btn-success" role ="button">修改</a>
+                </td>
+
+            </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal"> ADD </button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog"> <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel" align="center">add new url list</h4>
+      </div>
+
+      <div class="modal-body">
+          <div class="row">
+              <div class="col-md-8 col-md-offset-2"> {{ wtf.quick_form(form, form_type="horizontal") }} </div>
+          </div>
+      </div> <!-- modal body -->
+
+    </div> </div>
+</div>
+
+
+{% endblock %}
