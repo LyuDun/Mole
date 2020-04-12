@@ -10,8 +10,8 @@ subject = '您在鼹鼠监控的商品现已有货'
 smtpserver = 'smtp.qq.com'
 #username = 'cqcqhelloworld@gmail.com'
 #password = '1a2b3cmm2507@@CQ'
-username = '1778116108@qq.com'
-password = 'ryjcafrgjhyngaeg'
+username = '*************'
+password = '**********'
 
 
 scheduler = BlockingScheduler()
